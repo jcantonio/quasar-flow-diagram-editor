@@ -1,9 +1,8 @@
 <template>
   <div >
     <div v-bind:key="p.name" class="property" v-for="p in properties">
-      <q-input :label="p.label || p.name" type="text" v-model="p.value" />
+      <q-input :label="p.label || p.name" type="text" v-model="p.value" v-on:input="save" />
     </div>
-    <q-btn v-if="properties != null" label="Save" @click.prevent="save"/>
   </div>
 </template>
 

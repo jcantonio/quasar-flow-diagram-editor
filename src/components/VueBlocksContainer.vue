@@ -6,7 +6,7 @@
       :key="block.id"
       v-bind.sync="block"
       :options="optionsForChild"
-      @update="updatemodel"
+      @update="updateDiagram"
       @linkingStart="linkingStart(block, $event)"
       @linkingStop="linkingStop(block, $event)"
       @linkingBreak="linkingBreak(block, $event)"
@@ -36,7 +36,7 @@ export default {
         return []
       }
     },
-    model: {
+    diagram: {
       type: Object,
       default () {
         return { blocks: [], links: [], container: {} }
@@ -56,7 +56,7 @@ export default {
     this.centerY = this.$el.clientHeight / 2
 
     this.importMetaModel()
-    this.importmodel()
+    this.importDiagram()
   },
   beforeDestroy () {
     document.documentElement.removeEventListener('mousemove', this.handleMove, true)
@@ -79,7 +79,7 @@ export default {
 
     this.inputSlotClassName = 'inputSlot'
 
-    this.defaultmodel = {
+    this.defaultDiagram = {
       blocks: [],
       links: [],
       container: {}
@@ -249,7 +249,7 @@ export default {
         this.dragging = false
 
         if (this.hasDragged) {
-          this.updatemodel()
+          this.updateDiagram()
           this.hasDragged = false
         }
       }
@@ -287,7 +287,7 @@ export default {
         this.centerX -= deltaOffsetX
         this.centerY -= deltaOffsetY
 
-        this.updatemodel()
+        this.updateDiagram()
       }
     },
     // Processing
@@ -357,7 +357,7 @@ export default {
             targetID: targetBlock.id,
             targetSlot: slotNumber
           })
-          this.updatemodel()
+          this.updateDiagram()
         }
       }
 
@@ -382,7 +382,7 @@ export default {
 
           this.linkingStart(findBlock, findLink.originSlot)
 
-          this.updatemodel()
+          this.updateDiagram()
         }
       }
     },
@@ -419,7 +419,7 @@ export default {
       block.y = y
       this.blocks.push(block)
 
-      this.updatemodel()
+      this.updateDiagram()
     },
     createBlock (node, id) {
       let inputs = []
@@ -504,7 +504,7 @@ export default {
       this.blocks = this.blocks.filter(b => {
         return b.id !== block.id
       })
-      this.updatemodel()
+      this.updateDiagram()
     },
     //
     prepareBlocks (blocks) {
@@ -566,11 +566,11 @@ export default {
         this.nodes = merge([], this.metaModel)
       }
     },
-    importmodel () {
-      let model = merge(this.defaultmodel, this.model)
+    importDiagram () {
+      let diagram = merge(this.defaultDiagram, this.diagram)
 
-      let blocks = this.prepareBlocks(model.blocks)
-      blocks = this.prepareBlocksLinking(blocks, model.links)
+      let blocks = this.prepareBlocks(diagram.blocks)
+      blocks = this.prepareBlocksLinking(blocks, diagram.links)
 
       // set last selected after update blocks from props
       if (this.selectedBlock) {
@@ -581,9 +581,9 @@ export default {
       }
 
       this.blocks = blocks
-      this.links = merge([], model.links)
+      this.links = merge([], diagram.links)
 
-      let container = model.container
+      let container = diagram.container
       if (container.centerX) {
         this.centerX = container.centerX
       }
@@ -594,7 +594,7 @@ export default {
         this.scale = container.scale
       }
     },
-    exportmodel () {
+    exportDiagram () {
       let clonedBlocks = merge([], this.blocks)
       let blocks = clonedBlocks.map(value => {
         delete value['inputs']
@@ -610,16 +610,16 @@ export default {
         container: this.container
       }
     },
-    updatemodel () {
-      this.$emit('update:model', this.exportmodel())
+    updateDiagram () {
+      this.$emit('update:diagram', this.exportDiagram())
     }
   },
   watch: {
     metaModel () {
       this.importMetaModel()
     },
-    model () {
-      this.importmodel()
+    diagram () {
+      this.importDiagram()
     }
   }
 }

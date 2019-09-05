@@ -22,7 +22,7 @@
               />Use right click for Add blocks
             </label>
             <pre>
-              {{model}}
+              {{diagram}}
             </pre>
           </q-scroll-area>
         </div>
@@ -33,7 +33,7 @@
             @click.native="closeContextMenu"
             ref="container"
             :metaModel="metaModel"
-            :model.sync="model"
+            :diagram.sync="diagram"
             @blockSelect="selectBlock"
             @blockDeselect="deselectBlock"
             class="container"
@@ -91,7 +91,7 @@ export default {
   data: function () {
     return {
       metaModel: metaModel,
-      model: {
+      diagram: {
         blocks: [
           {
             id: 2,
@@ -502,13 +502,13 @@ export default {
     saveProperty (val) {
       console.log(val)
 
-      let model = this.model
-      let block = model.blocks.find(b => {
+      let diagram = this.diagram
+      let block = diagram.blocks.find(b => {
         return b.id === this.selectedBlock.id
       })
       block.values.property = val
 
-      this.model = merge({}, model)
+      this.diagram = merge({}, diagram)
     },
     showContextMenu (e) {
       if (!this.useContextMenu) return
@@ -555,8 +555,8 @@ export default {
     blocks (newValue) {
       // console.log('blocks', JSON.stringify(newValue))
     },
-    model (newValue) {
-      // console.log('model', JSON.stringify(newValue))
+    diagram (newValue) {
+      // console.log('diagram', JSON.stringify(newValue))
     }
   }
 }
