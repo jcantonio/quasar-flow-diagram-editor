@@ -6,7 +6,7 @@
       :key="block.id"
       v-bind.sync="block"
       :options="optionsForChild"
-      @update="updateScene"
+      @update="updatemodel"
       @linkingStart="linkingStart(block, $event)"
       @linkingStop="linkingStop(block, $event)"
       @linkingBreak="linkingBreak(block, $event)"
@@ -30,13 +30,13 @@ export default {
     VueLink
   },
   props: {
-    blocksContent: {
+    metaModel: {
       type: Array,
       default () {
         return []
       }
     },
-    scene: {
+    model: {
       type: Object,
       default () {
         return { blocks: [], links: [], container: {} }
@@ -55,8 +55,8 @@ export default {
     this.centerX = this.$el.clientWidth / 2
     this.centerY = this.$el.clientHeight / 2
 
-    this.importBlocksContent()
-    this.importScene()
+    this.importMetaModel()
+    this.importmodel()
   },
   beforeDestroy () {
     document.documentElement.removeEventListener('mousemove', this.handleMove, true)
@@ -79,7 +79,7 @@ export default {
 
     this.inputSlotClassName = 'inputSlot'
 
-    this.defaultScene = {
+    this.defaultmodel = {
       blocks: [],
       links: [],
       container: {}
@@ -249,7 +249,7 @@ export default {
         this.dragging = false
 
         if (this.hasDragged) {
-          this.updateScene()
+          this.updatemodel()
           this.hasDragged = false
         }
       }
@@ -287,7 +287,7 @@ export default {
         this.centerX -= deltaOffsetX
         this.centerY -= deltaOffsetY
 
-        this.updateScene()
+        this.updatemodel()
       }
     },
     // Processing
@@ -357,7 +357,7 @@ export default {
             targetID: targetBlock.id,
             targetSlot: slotNumber
           })
-          this.updateScene()
+          this.updatemodel()
         }
       }
 
@@ -382,7 +382,7 @@ export default {
 
           this.linkingStart(findBlock, findLink.originSlot)
 
-          this.updateScene()
+          this.updatemodel()
         }
       }
     },
@@ -419,7 +419,7 @@ export default {
       block.y = y
       this.blocks.push(block)
 
-      this.updateScene()
+      this.updatemodel()
     },
     createBlock (node, id) {
       let inputs = []
@@ -504,7 +504,7 @@ export default {
       this.blocks = this.blocks.filter(b => {
         return b.id !== block.id
       })
-      this.updateScene()
+      this.updatemodel()
     },
     //
     prepareBlocks (blocks) {
@@ -561,16 +561,16 @@ export default {
 
       return newBlocks
     },
-    importBlocksContent () {
-      if (this.blocksContent) {
-        this.nodes = merge([], this.blocksContent)
+    importMetaModel () {
+      if (this.metaModel) {
+        this.nodes = merge([], this.metaModel)
       }
     },
-    importScene () {
-      let scene = merge(this.defaultScene, this.scene)
+    importmodel () {
+      let model = merge(this.defaultmodel, this.model)
 
-      let blocks = this.prepareBlocks(scene.blocks)
-      blocks = this.prepareBlocksLinking(blocks, scene.links)
+      let blocks = this.prepareBlocks(model.blocks)
+      blocks = this.prepareBlocksLinking(blocks, model.links)
 
       // set last selected after update blocks from props
       if (this.selectedBlock) {
@@ -581,9 +581,9 @@ export default {
       }
 
       this.blocks = blocks
-      this.links = merge([], scene.links)
+      this.links = merge([], model.links)
 
-      let container = scene.container
+      let container = model.container
       if (container.centerX) {
         this.centerX = container.centerX
       }
@@ -594,7 +594,7 @@ export default {
         this.scale = container.scale
       }
     },
-    exportScene () {
+    exportmodel () {
       let clonedBlocks = merge([], this.blocks)
       let blocks = clonedBlocks.map(value => {
         delete value['inputs']
@@ -610,16 +610,16 @@ export default {
         container: this.container
       }
     },
-    updateScene () {
-      this.$emit('update:scene', this.exportScene())
+    updatemodel () {
+      this.$emit('update:model', this.exportmodel())
     }
   },
   watch: {
-    blocksContent () {
-      this.importBlocksContent()
+    metaModel () {
+      this.importMetaModel()
     },
-    scene () {
-      this.importScene()
+    model () {
+      this.importmodel()
     }
   }
 }

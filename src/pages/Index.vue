@@ -22,7 +22,7 @@
               />Use right click for Add blocks
             </label>
             <pre>
-              {{scene}}
+              {{model}}
             </pre>
           </q-scroll-area>
         </div>
@@ -32,8 +32,8 @@
             @contextmenu.native="showContextMenu"
             @click.native="closeContextMenu"
             ref="container"
-            :blocksContent="metaModel"
-            :scene.sync="scene"
+            :metaModel="metaModel"
+            :model.sync="model"
             @blockSelect="selectBlock"
             @blockDeselect="deselectBlock"
             class="container"
@@ -91,7 +91,7 @@ export default {
   data: function () {
     return {
       metaModel: metaModel,
-      scene: {
+      model: {
         blocks: [
           {
             id: 2,
@@ -497,19 +497,18 @@ export default {
       })
     },
     addBlock () {
-      console.log(this.selectedType)
       this.$refs.container.addNewBlock(this.selectedType, 100, 100)
     },
     saveProperty (val) {
       console.log(val)
 
-      let scene = this.scene
-      let block = scene.blocks.find(b => {
+      let model = this.model
+      let block = model.blocks.find(b => {
         return b.id === this.selectedBlock.id
       })
       block.values.property = val
 
-      this.scene = merge({}, scene)
+      this.model = merge({}, model)
     },
     showContextMenu (e) {
       if (!this.useContextMenu) return
@@ -554,10 +553,10 @@ export default {
   },
   watch: {
     blocks (newValue) {
-      console.log('blocks', JSON.stringify(newValue))
+      // console.log('blocks', JSON.stringify(newValue))
     },
-    scene (newValue) {
-      console.log('scene', JSON.stringify(newValue))
+    model (newValue) {
+      // console.log('model', JSON.stringify(newValue))
     }
   }
 }

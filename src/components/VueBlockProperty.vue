@@ -3,7 +3,7 @@
     <div v-bind:key="p.name" class="property" v-for="p in properties">
       <q-input :label="p.label || p.name" type="text" v-model="p.value" />
     </div>
-    <q-btn v-if="properties" label="Save" @click.prevent="save"/>
+    <q-btn v-if="properties != null" label="Save" @click.prevent="save"/>
   </div>
 </template>
 
@@ -13,7 +13,7 @@ export default {
   props: ['property'],
   data () {
     return {
-      properties: []
+      properties: null
     }
   },
   methods: {
