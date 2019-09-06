@@ -1,73 +1,108 @@
 <template>
   <q-page class="flex justify-center full-width">
     <div class="row full-width">
-      <div class="col-2 q-card">
-        <div class="container-2 q-list">
-          <div class="list-header" style="text-align:center;">Schema</div>
-          <q-scroll-area style="width: 100%; height: 800px;">
-            <label>
-              <q-select
-                name="type"
-                v-model="selectedType"
-                :options="selectableBlocks"
-              >
-              </q-select>
-            </label>
-            <q-btn label="Add" @click.stop="addBlock"></q-btn>
-            <label for="useContextMenu">
-              <input
-                type="checkbox"
-                v-model="useContextMenu"
-                id="useContextMenu"
-              />Use right click for Add blocks
-            </label>
-            <pre>
-              {{diagram}}
-            </pre>
-          </q-scroll-area>
-        </div>
-      </div>
-      <div class="col-8 q-card">
-          <VueBlocksContainer
-            @contextmenu.native="showContextMenu"
-            @click.native="closeContextMenu"
-            ref="container"
-            :metaModel="metaModel"
-            :diagram.sync="diagram"
-            @blockSelect="selectBlock"
-            @blockDeselect="deselectBlock"
-            class="container"
-          />
+      <div class="col-10 q-card">
+        <VueBlocksContainer
+          @contextmenu.native="showContextMenu"
+          @click.native="closeContextMenu"
+          ref="container"
+          :metaModel="metaModel"
+          :diagram.sync="diagram"
+          @blockSelect="selectBlock"
+          @blockDeselect="deselectBlock"
+          class="container"
+        />
 
-          <ul
-            id="contextMenu"
-            ref="contextMenu"
-            tabindex="-1"
-            v-show="contextMenu.isShow"
-            @blur="closeContextMenu"
-            :style="{
-              top: contextMenu.top + 'px',
-              left: contextMenu.left + 'px'
-            }"
-          >
-            <template v-for="type in selectBlocksType">
-              <li v-bind:key="type.index" class="label">{{ type }}</li>
-              <li
-                v-for="block in filteredBlocks(type)"
-                v-bind:key="block.index"
-                @click="addBlockContextMenu(block.name)"
-              >
-                {{ block.title || block.name }}
-              </li>
-            </template>
-          </ul>
+        <ul
+          id="contextMenu"
+          ref="contextMenu"
+          tabindex="-1"
+          v-show="contextMenu.isShow"
+          @blur="closeContextMenu"
+          :style="{
+            top: contextMenu.top + 'px',
+            left: contextMenu.left + 'px'
+          }"
+        >
+          <template v-for="type in selectBlocksType">
+            <li v-bind:key="type.index" class="label">{{ type }}</li>
+            <li
+              v-for="block in filteredBlocks(type)"
+              v-bind:key="block.index"
+              @click="addBlockContextMenu(block.name)"
+            >
+              {{ block.title || block.name }}
+            </li>
+          </template>
+        </ul>
       </div>
       <div class="col-2 container-1 q-card">
         <q-list class="container-2" separator>
-          <VueBlockProperty
-            :property="selectedBlockProperty"
-            @save="saveProperty"
-          />
+          <q-expansion-item
+            expand-separator
+            icon="perm_identity"
+            label="Account settings"
+            caption="John Doe"
+            default-opened
+          >
+            <q-card>
+              <q-card-section>
+                <label>
+                  <q-select
+                    name="type"
+                    v-model="selectedType"
+                    :options="selectableBlocks"
+                  >
+                  </q-select>
+                </label>
+                <q-btn label="Add" @click.stop="addBlock"></q-btn>
+                <label for="useContextMenu">
+                  <input
+                    type="checkbox"
+                    v-model="useContextMenu"
+                    id="useContextMenu"
+                  />Use right click for Add blocks
+                </label>
+              </q-card-section>
+            </q-card>
+          </q-expansion-item>
+
+          <q-expansion-item
+            expand-separator
+            icon="drafts"
+            label="Property"
+            caption="Click on element to display its properties"
+            default-opened
+          >
+            <q-card>
+              <q-card-section>
+                <VueBlockProperty
+                  :property="selectedBlockProperty"
+                  @save="saveProperty"
+                />
+              </q-card-section>
+            </q-card>
+          </q-expansion-item>
+
+          <q-expansion-item
+            expand-separator
+            icon="perm_identity"
+            label="Account settings"
+            caption="John Doe"
+          >
+            <q-card>
+              <q-card-section>
+                <pre>
+              {{ this.contextMenu.mouseX + ':' + this.contextMenu.mouseY }}
+            </pre
+                >
+                <pre>
+              {{ diagram }}
+            </pre
+                >
+              </q-card-section>
+            </q-card>
+          </q-expansion-item>
         </q-list>
       </div>
     </div>
@@ -183,6 +218,7 @@ export default {
     },
     addBlockContextMenu (name) {
       let offset = domHelper.getOffsetRect(this.$refs.container.$el)
+
       let x = this.contextMenu.mouseX - offset.left
       let y = this.contextMenu.mouseY - offset.top
 
