@@ -3,8 +3,6 @@
     <div class="row full-width">
       <div class="col-10 q-card">
         <VueNodesContainer
-          @contextmenu.native="showContextMenu"
-          @click.native="closeContextMenu"
           ref="container"
           :MMNodes="MMNodes"
           :diagram.sync="diagram"
@@ -12,42 +10,33 @@
           @nodeDeselect="deselectNode"
           class="container"
         />
-
-        <ul
-          id="contextMenu"
-          ref="contextMenu"
-          tabindex="-1"
-          v-show="contextMenu.isShow"
-          @blur="closeContextMenu"
-          :style="{
-            top: contextMenu.top + 'px',
-            left: contextMenu.left + 'px'
-          }"
-        >
-          <template v-for="type in selectMMNodes">
-            <li v-bind:key="type.index" class="label">{{ type }}</li>
-            <li
-              v-for="node in filteredMMNodes(type)"
-              v-bind:key="node.index"
-              @click="addNodeContextMenu(node.name)"
-            >
-              {{ node.title || node.name }}
-            </li>
-          </template>
-        </ul>
       </div>
       <div class="col-2 container-1 q-card">
         <q-list class="container-2" separator>
           <q-expansion-item
             expand-separator
-            icon="adjust"
+            icon="category"
             label="Nodes"
             caption="Click to add"
             default-opened
           >
             <q-card>
               <q-card-section>
-                <q-btn no-caps v-bind:key="node.name" v-for="node in selectableMMNodes" :label="node.label || node.value" @click.stop="addNode(node.value)"></q-btn>
+                <q-btn
+                  :icon="node.icon || 'adjust'"
+                  no-caps
+                  v-bind:key="node.type"
+                  v-for="node in MMNodes"
+                  :label="node.title || node.type"
+                  @click.stop="addNode(node.type)"
+                >
+                  <q-tooltip
+                    v-if="node.description"
+                    :delay="1000"
+                    :offset="[0, 10]"
+                    >{{ node.description }}</q-tooltip
+                  >
+                </q-btn>
               </q-card-section>
             </q-card>
           </q-expansion-item>
@@ -55,13 +44,16 @@
           <q-expansion-item
             expand-separator
             icon="settings"
-            label="Property"
+            label="Properties"
             caption="Click on element to display its properties"
             default-opened
           >
             <q-card>
               <q-card-section>
                 <VueNodeProperty
+                  :selected="selectedNode!=null"
+                  :title="selectedNodeTitle"
+                  @save-title="saveTitle"
                   :property="selectedNodeProperty"
                   @save="saveProperty"
                 />
@@ -76,10 +68,6 @@
           >
             <q-card>
               <q-card-section>
-                <pre>
-              {{ this.contextMenu.mouseX + ':' + this.contextMenu.mouseY }}
-            </pre
-                >
                 <pre>
               {{ diagram }}
             </pre
@@ -98,7 +86,6 @@ import merge from 'deepmerge'
 
 import VueNodesContainer from 'components/VueNodesContainer'
 import VueNodeProperty from 'components/VueNodeProperty'
-import domHelper from '../helpers/dom'
 import MMNodes from './mm.json'
 import diagram from './diagram.json'
 
@@ -113,15 +100,7 @@ export default {
       MMNodes: MMNodes,
       diagram: diagram,
       selectedNode: null,
-      selectedType: 'delay',
-      useContextMenu: true,
-      contextMenu: {
-        isShow: false,
-        mouseX: 0,
-        mouseY: 0,
-        top: 0,
-        left: 0
-      }
+      selectedType: 'delay'
     }
   },
   computed: {
@@ -131,15 +110,11 @@ export default {
       }
       return this.selectedNode.values.property
     },
-    selectableMMNodes () {
-      return this.MMNodes.map(function (item) { return { value: item.name, label: item.title ? item.title : item.name } })
-    },
-    selectMMNodes () {
-      return this.MMNodes.map(b => {
-        return b.family
-      }).filter((value, index, array) => {
-        return array.indexOf(value) === index
-      })
+    selectedNodeTitle () {
+      if (!this.selectedNode || !this.selectedNode.title) {
+        return null
+      }
+      return this.selectedNode.title
     }
   },
   methods: {
@@ -150,11 +125,6 @@ export default {
     deselectNode (node) {
       console.log('deselect', node)
       this.selectedNode = null
-    },
-    filteredMMNodes (type) {
-      return this.MMNodes.filter(value => {
-        return value.family === type
-      })
     },
     addNode (type) {
       this.$refs.container.addNewNode(type, 100, 100)
@@ -170,46 +140,16 @@ export default {
 
       this.diagram = merge({}, diagram)
     },
-    showContextMenu (e) {
-      if (!this.useContextMenu) return
-      if (e.preventDefault) e.preventDefault()
+    saveTitle (val) {
+      console.log(val)
 
-      this.contextMenu.isShow = true
-      this.contextMenu.mouseX = e.x
-      this.contextMenu.mouseY = e.y
-
-      this.$nextTick(function () {
-        this.setMenu(e.y, e.x)
-        this.$refs.contextMenu.focus()
+      let diagram = this.diagram
+      let node = diagram.nodes.find(b => {
+        return b.id === this.selectedNode.id
       })
-    },
-    setMenu (top, left) {
-      let border = 5
-      let contextMenuEl = this.$refs.contextMenu
-      let containerElRect = this.$refs.container.$el.getBoundingClientRect()
-      let largestWidth = containerElRect.right - contextMenuEl.offsetWidth - border
-      let largestHeight = containerElRect.bottom - contextMenuEl.offsetHeight - border
+      node.title = val
 
-      console.log(this.$refs.container)
-      console.log(containerElRect)
-
-      if (left > largestWidth) left = largestWidth
-      if (top > largestHeight) top = largestHeight
-
-      this.contextMenu.top = top
-      this.contextMenu.left = left
-    },
-    addNodeContextMenu (name) {
-      let offset = domHelper.getOffsetRect(this.$refs.container.$el)
-
-      let x = this.contextMenu.mouseX - offset.left
-      let y = this.contextMenu.mouseY - offset.top
-
-      this.$refs.container.addNewNode(name, x, y)
-      this.closeContextMenu()
-    },
-    closeContextMenu () {
-      this.contextMenu.isShow = false
+      this.diagram = merge({}, diagram)
     }
   },
   watch: {
@@ -250,26 +190,5 @@ body {
   width: 100%;
   height: ~'calc(100% - 50px)';
   border: 1px solid rgb(226, 226, 226);
-}
-
-#contextMenu {
-  position: absolute;
-  z-index: 1000;
-  background: white;
-  border: 1px solid black;
-  padding: 5px;
-  margin: 0;
-
-  li {
-    &.label {
-      color: gray;
-      font-size: 90%;
-    }
-    list-style: none;
-  }
-
-  &:focus {
-    outline: none;
-  }
 }
 </style>

@@ -1,54 +1,51 @@
 [
   {
-    "name": "text",
-    "title": "Text",
-    "icon": "text_fields",
-    "family": "Animations",
-    "description": "Show text",
+    "type": "start",
+    "title": "Start",
+    "icon": "trip_origin",
+    "description": "Start Process",
     "fields": [
       {
-        "name": "text",
-        "label": "Text",
-        "type": "string",
-        "attr": "property"
-      },
-      {
-        "name": "delay",
-        "label": "Delay (s)",
-        "type": "number",
-        "attr": "property"
-      },
-      {
-        "name": "Show",
-        "type": "event",
-        "attr": "input"
-      },
-      {
-        "name": "Hide",
-        "type": "event",
-        "attr": "input"
-      },
-      {
-        "name": "onShow",
-        "type": "event",
-        "attr": "output"
-      },
-      {
-        "name": "onHide",
+        "name": "onStart",
         "type": "event",
         "attr": "output"
       }
     ]
   },
   {
-    "name": "animation",
-    "title": "Animation",
-    "family": "Animations",
-    "description": "Show animation",
+    "type": "end_ok",
+    "title": "End Ok",
+    "icon": "mood",
+    "description": "End Process",
     "fields": [
       {
-        "name": "animation",
-        "label": "Animation",
+        "name": "inform",
+        "type": "event",
+        "attr": "input"
+      }
+    ]
+  },
+  {
+    "type": "end_ko",
+    "title": "End not Ok",
+    "icon": "mood_bad",
+    "description": "End Process",
+    "fields": [
+      {
+        "name": "inform",
+        "type": "event",
+        "attr": "input"
+      }
+    ]
+  },
+  {
+    "type": "rest",
+    "icon": "settings_input_component",
+    "title": "REST Call",
+    "fields": [
+      {
+        "name": "method",
+        "label": "Method",
         "type": "animation",
         "attr": "property"
       },
@@ -63,34 +60,97 @@
         "attr": "input"
       },
       {
-        "name": "onEnd",
+        "name": "onOK",
+        "type": "event",
+        "attr": "output"
+      },
+      {
+        "name": "onKO",
         "type": "event",
         "attr": "output"
       }
     ]
   },
   {
-    "name": "Chat message",
-    "family": "Events",
-    "description": "",
+    "type": "sms",
+    "title": "Send SMS",
+    "icon": "sms",
+    "description": "send SMS",
     "fields": [
       {
-        "name": "message",
-        "label": "Activation message",
+        "name": "recipients",
+        "label": "Recipients",
         "type": "string",
         "attr": "property"
       },
       {
-        "name": "onMessage",
+        "name": "message",
+        "label": "Message",
+        "type": "string",
+        "attr": "property"
+      },
+      {
+        "name": "call",
+        "type": "event",
+        "attr": "input"
+      },
+      {
+        "name": "onOK",
+        "type": "event",
+        "attr": "output"
+      },
+      {
+        "name": "onKO",
         "type": "event",
         "attr": "output"
       }
     ]
   },
   {
-    "name": "delay",
+    "type": "email",
+    "title": "Send Email",
+    "icon": "mail",
+    "description": "send Email",
+    "fields": [
+      {
+        "name": "recipients",
+        "label": "Recipients",
+        "type": "string",
+        "attr": "property"
+      },
+      {
+        "name": "subject",
+        "label": "Subject",
+        "type": "string",
+        "attr": "property"
+      },
+      {
+        "name": "message",
+        "label": "Message",
+        "type": "string",
+        "attr": "property"
+      },
+      {
+        "name": "call",
+        "type": "event",
+        "attr": "input"
+      },
+      {
+        "name": "onOK",
+        "type": "event",
+        "attr": "output"
+      },
+      {
+        "name": "onKO",
+        "type": "event",
+        "attr": "output"
+      }
+    ]
+  },
+  {
+    "type": "delay",
+    "icon": "hourglass_empty",
     "title": "Delay",
-    "family": "Time",
     "description": "",
     "fields": [
       {
@@ -104,58 +164,6 @@
         "name": "input",
         "type": "event",
         "attr": "input"
-      },
-      {
-        "name": "output",
-        "type": "event",
-        "attr": "output"
-      }
-    ]
-  },
-  {
-    "name": "shortcuts",
-    "title": "Shortcuts",
-    "family": "Events",
-    "description": "Press shortcut for call event",
-    "fields": [
-      {
-        "name": "keys",
-        "label": "Activation keys",
-        "type": "keys",
-        "attr": "property"
-      },
-      {
-        "name": "onPress",
-        "type": "event",
-        "attr": "output"
-      }
-    ]
-  },
-  {
-    "name": "splitter",
-    "title": "Splitter",
-    "family": "Helpers",
-    "description": "Press shortcut for call event",
-    "fields": [
-      {
-        "name": "input",
-        "type": "event",
-        "attr": "input"
-      },
-      {
-        "name": "output",
-        "type": "event",
-        "attr": "output"
-      },
-      {
-        "name": "output",
-        "type": "event",
-        "attr": "output"
-      },
-      {
-        "name": "output",
-        "type": "event",
-        "attr": "output"
       },
       {
         "name": "output",

@@ -218,7 +218,6 @@ export default {
   > header {
     background: #e6e6e6;
     text-align: center;
-
     > .delete {
       float: right;
       position: absolute;

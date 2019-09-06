@@ -39,6 +39,7 @@ module.exports = function (ctx) {
         'QDrawer',
         'QPageContainer',
         'QPage',
+        'QTooltip',
         'QToolbar',
         'QToolbarTitle',
         'QBtn',

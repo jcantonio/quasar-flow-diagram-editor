@@ -398,7 +398,7 @@ export default {
       }))
 
       let MMNode = this.internalMMNodes.find(n => {
-        return n.name === MMNodeName
+        return n.type === MMNodeName
       })
 
       if (!MMNode) {
@@ -459,8 +459,8 @@ export default {
         x: 0,
         y: 0,
         selected: false,
-        name: MMNode.name,
-        title: MMNode.title || MMNode.name,
+        type: MMNode.type,
+        title: MMNode.title || MMNode.type,
         icon: MMNode.icon,
         inputs: inputs,
         outputs: outputs,
@@ -511,7 +511,7 @@ export default {
     prepareNodes (nodes) {
       return nodes.map(node => {
         let MMNode = this.internalMMNodes.find(n => {
-          return n.name === node.name
+          return n.type === node.type
         })
 
         if (!MMNode) {
