@@ -2,6 +2,7 @@
   {
     "name": "text",
     "title": "Text",
+    "icon": "text_fields",
     "family": "Animations",
     "description": "Show text",
     "fields": [

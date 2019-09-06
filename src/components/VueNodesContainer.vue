@@ -461,6 +461,7 @@ export default {
         selected: false,
         name: MMNode.name,
         title: MMNode.title || MMNode.name,
+        icon: MMNode.icon,
         inputs: inputs,
         outputs: outputs,
         values: values

@@ -1,6 +1,7 @@
 <template>
   <div class="vue-node" :class="{ selected: selected }" :style="style">
     <header :style="headerStyle">
+      <q-icon class="icon" size="xs" :name="icon"/>
       {{ title }}
       <q-btn class="delete" round size="xs" icon="remove" @click="deleteNode"/>
     </header>
@@ -50,6 +51,10 @@ export default {
     title: {
       type: String,
       default: 'Title'
+    },
+    icon: {
+      type: String,
+      default: 'adjust'
     },
     inputs: Array,
     outputs: Array,
@@ -222,6 +227,9 @@ export default {
     }
   }
 
+  .icon {
+      float: left;
+  }
   .inputs,
   .outputs {
     padding: @ioPaddingInner;
