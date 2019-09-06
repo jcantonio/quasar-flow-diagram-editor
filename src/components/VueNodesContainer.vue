@@ -1,17 +1,17 @@
 <template>
   <div class="vue-container">
     <VueLink :lines="lines" />
-    <VueBlock
-      v-for="block in blocks"
-      :key="block.id"
-      v-bind.sync="block"
+    <VueNode
+      v-for="node in nodes"
+      :key="node.id"
+      v-bind.sync="node"
       :options="optionsForChild"
       @update="updateDiagram"
-      @linkingStart="linkingStart(block, $event)"
-      @linkingStop="linkingStop(block, $event)"
-      @linkingBreak="linkingBreak(block, $event)"
-      @select="blockSelect(block)"
-      @delete="blockDelete(block)"
+      @linkingStart="linkingStart(node, $event)"
+      @linkingStop="linkingStop(node, $event)"
+      @linkingBreak="linkingBreak(node, $event)"
+      @select="nodeSelect(node)"
+      @delete="nodeDelete(node)"
     />
   </div>
 </template>
@@ -20,17 +20,17 @@
 import merge from 'deepmerge'
 import mouseHelper from '../helpers/mouse'
 
-import VueBlock from './VueBlock'
+import VueNode from './VueNode'
 import VueLink from './VueLink'
 
 export default {
-  name: 'VueBlockContainer',
+  name: 'VueNodeContainer',
   components: {
-    VueBlock,
+    VueNode,
     VueLink
   },
   props: {
-    metaModel: {
+    MMNodes: {
       type: Array,
       default () {
         return []
@@ -39,7 +39,7 @@ export default {
     diagram: {
       type: Object,
       default () {
-        return { blocks: [], links: [], container: {} }
+        return { nodes: [], links: [], container: {} }
       }
     },
     options: {
@@ -80,7 +80,7 @@ export default {
     this.inputSlotClassName = 'inputSlot'
 
     this.defaultDiagram = {
-      blocks: [],
+      nodes: [],
       links: [],
       container: {}
     }
@@ -93,12 +93,12 @@ export default {
       centerY: 0,
       scale: 1,
       //
+      internalMMNodes: [],
       nodes: [],
-      blocks: [],
       links: [],
       //
       tempLink: null,
-      selectedBlock: null,
+      selectedNode: null,
       hasDragged: false
     }
   },
@@ -127,28 +127,28 @@ export default {
       let lines = []
 
       for (let link of this.links) {
-        let originBlock = this.blocks.find(block => {
-          return block.id === link.originID
+        let originNode = this.nodes.find(node => {
+          return node.id === link.originID
         })
 
-        let targetBlock = this.blocks.find(block => {
-          return block.id === link.targetID
+        let targetNode = this.nodes.find(node => {
+          return node.id === link.targetID
         })
 
-        if (!originBlock || !targetBlock) {
+        if (!originNode || !targetNode) {
           console.log('Remove invalid link', link)
           this.removeLink(link.id)
           continue
         }
 
-        if (originBlock.id === targetBlock.id) {
+        if (originNode.id === targetNode.id) {
           console.log('Loop detected, remove link', link)
           this.removeLink(link.id)
           continue
         }
 
-        let originLinkPos = this.getConnectionPos(originBlock, link.originSlot, false)
-        let targetLinkPos = this.getConnectionPos(targetBlock, link.targetSlot, true)
+        let originLinkPos = this.getConnectionPos(originNode, link.originSlot, false)
+        let targetLinkPos = this.getConnectionPos(targetNode, link.targetSlot, true)
 
         if (!originLinkPos || !targetLinkPos) {
           console.log('Remove invalid link (slot not exist)', link)
@@ -217,7 +217,7 @@ export default {
       }
 
       if (this.linking && this.linkStartData) {
-        let linkStartPos = this.getConnectionPos(this.linkStartData.block, this.linkStartData.slotNumber, false)
+        let linkStartPos = this.getConnectionPos(this.linkStartData.node, this.linkStartData.slotNumber, false)
         this.tempLink = {
           x1: linkStartPos.x,
           y1: linkStartPos.y,
@@ -291,28 +291,28 @@ export default {
       }
     },
     // Processing
-    getConnectionPos (block, slotNumber, isInput) {
-      if (!block || slotNumber === -1) {
+    getConnectionPos (node, slotNumber, isInput) {
+      if (!node || slotNumber === -1) {
         return undefined
       }
 
       let x = 0
       let y = 0
 
-      x += block.x
-      y += block.y
+      x += node.x
+      y += node.y
 
       y += this.optionsForChild.titleHeight
 
-      if (isInput && block.inputs.length > slotNumber) {
-      } else if (!isInput && block.outputs.length > slotNumber) {
+      if (isInput && node.inputs.length > slotNumber) {
+      } else if (!isInput && node.outputs.length > slotNumber) {
         x += this.optionsForChild.width
       } else {
-        console.error('slot ' + slotNumber + ' not found, is input: ' + isInput, block)
+        console.error('slot ' + slotNumber + ' not found, is input: ' + isInput, node)
         return undefined
       }
 
-      // (height / 2 + blockBorder + padding)
+      // (height / 2 + nodeBorder + padding)
       y += (16 / 2 + 1 + 2)
       //  + (height * slotNumber)
       y += (16 * slotNumber)
@@ -326,9 +326,9 @@ export default {
       return { x: x, y: y }
     },
     // Linking
-    linkingStart (block, slotNumber) {
-      this.linkStartData = { block: block, slotNumber: slotNumber }
-      let linkStartPos = this.getConnectionPos(this.linkStartData.block, this.linkStartData.slotNumber, false)
+    linkingStart (node, slotNumber) {
+      this.linkStartData = { node: node, slotNumber: slotNumber }
+      let linkStartPos = this.getConnectionPos(this.linkStartData.node, this.linkStartData.slotNumber, false)
       this.tempLink = {
         x1: linkStartPos.x,
         y1: linkStartPos.y,
@@ -338,10 +338,10 @@ export default {
 
       this.linking = true
     },
-    linkingStop (targetBlock, slotNumber) {
-      if (this.linkStartData && targetBlock && slotNumber > -1) {
+    linkingStop (targetNode, slotNumber) {
+      if (this.linkStartData && targetNode && slotNumber > -1) {
         this.links = this.links.filter(value => {
-          return !(value.targetID === targetBlock.id && value.targetSlot === slotNumber)
+          return !(value.targetID === targetNode.id && value.targetSlot === slotNumber)
         })
 
         let maxID = Math.max(0, ...this.links.map(function (o) {
@@ -349,12 +349,12 @@ export default {
         }))
 
         // skip if looping
-        if (this.linkStartData.block.id !== targetBlock.id) {
+        if (this.linkStartData.node.id !== targetNode.id) {
           this.links.push({
             id: maxID + 1,
-            originID: this.linkStartData.block.id,
+            originID: this.linkStartData.node.id,
             originSlot: this.linkStartData.slotNumber,
-            targetID: targetBlock.id,
+            targetID: targetNode.id,
             targetSlot: slotNumber
           })
           this.updateDiagram()
@@ -365,22 +365,22 @@ export default {
       this.tempLink = null
       this.linkStartData = null
     },
-    linkingBreak (targetBlock, slotNumber) {
-      if (targetBlock && slotNumber > -1) {
+    linkingBreak (targetNode, slotNumber) {
+      if (targetNode && slotNumber > -1) {
         let findLink = this.links.find(value => {
-          return value.targetID === targetBlock.id && value.targetSlot === slotNumber
+          return value.targetID === targetNode.id && value.targetSlot === slotNumber
         })
 
         if (findLink) {
-          let findBlock = this.blocks.find(value => {
+          let findNode = this.nodes.find(value => {
             return value.id === findLink.originID
           })
 
           this.links = this.links.filter(value => {
-            return !(value.targetID === targetBlock.id && value.targetSlot === slotNumber)
+            return !(value.targetID === targetNode.id && value.targetSlot === slotNumber)
           })
 
-          this.linkingStart(findBlock, findLink.originSlot)
+          this.linkingStart(findNode, findLink.originSlot)
 
           this.updateDiagram()
         }
@@ -391,22 +391,22 @@ export default {
         return !(value.id === linkID)
       })
     },
-    // Blocks
-    addNewBlock (nodeName, x, y) {
-      let maxID = Math.max(0, ...this.blocks.map(function (o) {
+    // Nodes
+    addNewNode (MMNodeName, x, y) {
+      let maxID = Math.max(0, ...this.nodes.map(function (o) {
         return o.id
       }))
 
-      let node = this.nodes.find(n => {
-        return n.name === nodeName
+      let MMNode = this.internalMMNodes.find(n => {
+        return n.name === MMNodeName
       })
 
-      if (!node) {
+      if (!MMNode) {
         return
       }
-      let block = this.createBlock(node, maxID + 1)
+      let node = this.createNode(MMNode, maxID + 1)
 
-      // if x or y not set, place block to center
+      // if x or y not set, place node to center
       if (x === undefined || y === undefined) {
         x = (this.$el.clientWidth / 2 - this.centerX) / this.scale
         y = (this.$el.clientHeight / 2 - this.centerY) / this.scale
@@ -415,18 +415,18 @@ export default {
         y = (y - this.centerY) / this.scale
       }
 
-      block.x = x
-      block.y = y
-      this.blocks.push(block)
+      node.x = x
+      node.y = y
+      this.nodes.push(node)
 
       this.updateDiagram()
     },
-    createBlock (node, id) {
+    createNode (MMNode, id) {
       let inputs = []
       let outputs = []
       let values = {}
 
-      node.fields.forEach(field => {
+      MMNode.fields.forEach(field => {
         if (field.attr === 'input') {
           inputs.push({
             name: field.name,
@@ -459,128 +459,128 @@ export default {
         x: 0,
         y: 0,
         selected: false,
-        name: node.name,
-        title: node.title || node.name,
+        name: MMNode.name,
+        title: MMNode.title || MMNode.name,
         inputs: inputs,
         outputs: outputs,
         values: values
       }
     },
     deselectAll (withoutID = null) {
-      this.blocks.forEach((value) => {
+      this.nodes.forEach((value) => {
         if (value.id !== withoutID && value.selected) {
-          this.blockDeselect(value)
+          this.nodeDeselect(value)
         }
       })
     },
     // Events
-    blockSelect (block) {
-      block.selected = true
-      this.selectedBlock = block
-      this.deselectAll(block.id)
-      this.$emit('blockSelect', block)
+    nodeSelect (node) {
+      node.selected = true
+      this.selectedNode = node
+      this.deselectAll(node.id)
+      this.$emit('nodeSelect', node)
     },
-    blockDeselect (block) {
-      block.selected = false
+    nodeDeselect (node) {
+      node.selected = false
 
-      if (block &&
-        this.selectedBlock &&
-        this.selectedBlock.id === block.id
+      if (node &&
+        this.selectedNode &&
+        this.selectedNode.id === node.id
       ) {
-        this.selectedBlock = null
+        this.selectedNode = null
       }
 
-      this.$emit('blockDeselect', block)
+      this.$emit('nodeDeselect', node)
     },
-    blockDelete (block) {
-      if (block.selected) {
-        this.blockDeselect(block)
+    nodeDelete (node) {
+      if (node.selected) {
+        this.nodeDeselect(node)
       }
       this.links.forEach(l => {
-        if (l.originID === block.id || l.targetID === block.id) {
+        if (l.originID === node.id || l.targetID === node.id) {
           this.removeLink(l.id)
         }
       })
-      this.blocks = this.blocks.filter(b => {
-        return b.id !== block.id
+      this.nodes = this.nodes.filter(b => {
+        return b.id !== node.id
       })
       this.updateDiagram()
     },
     //
-    prepareBlocks (blocks) {
-      return blocks.map(block => {
-        let node = this.nodes.find(n => {
-          return n.name === block.name
+    prepareNodes (nodes) {
+      return nodes.map(node => {
+        let MMNode = this.internalMMNodes.find(n => {
+          return n.name === node.name
         })
 
-        if (!node) {
+        if (!MMNode) {
           return null
         }
 
-        let newBlock = this.createBlock(node, block.id)
+        let newNode = this.createNode(MMNode, node.id)
 
-        newBlock = merge(newBlock, block, {
+        newNode = merge(newNode, node, {
           arrayMerge: (d, s) => {
             return s.length === 0 ? d : s
           }
         })
 
-        return newBlock
+        return newNode
       }).filter(b => {
         return !!b
       })
     },
-    prepareBlocksLinking (blocks, links) {
-      if (!blocks) {
+    prepareNodesLinking (nodes, links) {
+      if (!nodes) {
         return []
       }
 
-      let newBlocks = []
+      let newNodes = []
 
-      blocks.forEach(block => {
+      nodes.forEach(node => {
         let inputs = links.filter(link => {
-          return link.targetID === block.id
+          return link.targetID === node.id
         })
 
         let outputs = links.filter(link => {
-          return link.originID === block.id
+          return link.originID === node.id
         })
 
-        block.inputs.forEach((s, index) => {
+        node.inputs.forEach((s, index) => {
           // is linked
-          block.inputs[index].active = inputs.some(i => i.targetSlot === index)
+          node.inputs[index].active = inputs.some(i => i.targetSlot === index)
         })
 
-        block.outputs.forEach((s, index) => {
+        node.outputs.forEach((s, index) => {
           // is linked
-          block.outputs[index].active = outputs.some(i => i.originSlot === index)
+          node.outputs[index].active = outputs.some(i => i.originSlot === index)
         })
 
-        newBlocks.push(block)
+        newNodes.push(node)
       })
 
-      return newBlocks
+      return newNodes
     },
     importMetaModel () {
-      if (this.metaModel) {
-        this.nodes = merge([], this.metaModel)
+      if (this.MMNodes) {
+        this.internalMMNodes = merge([], this.MMNodes)
       }
     },
     importDiagram () {
       let diagram = merge(this.defaultDiagram, this.diagram)
 
-      let blocks = this.prepareBlocks(diagram.blocks)
-      blocks = this.prepareBlocksLinking(blocks, diagram.links)
+      let nodes = this.prepareNodes(diagram.nodes)
+      nodes = this.prepareNodesLinking(nodes, diagram.links)
 
-      // set last selected after update blocks from props
-      if (this.selectedBlock) {
-        let block = blocks.find(b => this.selectedBlock.id === b.id)
-        if (block) {
-          block.selected = true
+      // set last selected after update nodes from props
+      if (this.selectedNode) {
+        let node = nodes.find(b => this.selectedNode.id === b.id)
+        if (node) {
+          node.selected = true
         }
       }
 
-      this.blocks = blocks
+      this.nodes = nodes
       this.links = merge([], diagram.links)
 
       let container = diagram.container
@@ -595,8 +595,8 @@ export default {
       }
     },
     exportDiagram () {
-      let clonedBlocks = merge([], this.blocks)
-      let blocks = clonedBlocks.map(value => {
+      let clonedNodes = merge([], this.nodes)
+      let nodes = clonedNodes.map(value => {
         delete value['inputs']
         delete value['outputs']
         delete value['selected']
@@ -605,7 +605,7 @@ export default {
       })
 
       return {
-        blocks: blocks,
+        nodes: nodes,
         links: this.links,
         container: this.container
       }
@@ -615,7 +615,7 @@ export default {
     }
   },
   watch: {
-    metaModel () {
+    MMNodes () {
       this.importMetaModel()
     },
     diagram () {

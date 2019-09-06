@@ -2,14 +2,14 @@
   <q-page class="flex justify-center full-width">
     <div class="row full-width">
       <div class="col-10 q-card">
-        <VueBlocksContainer
+        <VueNodesContainer
           @contextmenu.native="showContextMenu"
           @click.native="closeContextMenu"
           ref="container"
-          :metaModel="metaModel"
+          :MMNodes="MMNodes"
           :diagram.sync="diagram"
-          @blockSelect="selectBlock"
-          @blockDeselect="deselectBlock"
+          @nodeSelect="selectNode"
+          @nodeDeselect="deselectNode"
           class="container"
         />
 
@@ -24,14 +24,14 @@
             left: contextMenu.left + 'px'
           }"
         >
-          <template v-for="type in selectBlocksType">
+          <template v-for="type in selectMMNodes">
             <li v-bind:key="type.index" class="label">{{ type }}</li>
             <li
-              v-for="block in filteredBlocks(type)"
-              v-bind:key="block.index"
-              @click="addBlockContextMenu(block.name)"
+              v-for="node in filteredMMNodes(type)"
+              v-bind:key="node.index"
+              @click="addNodeContextMenu(node.name)"
             >
-              {{ block.title || block.name }}
+              {{ node.title || node.name }}
             </li>
           </template>
         </ul>
@@ -40,44 +40,29 @@
         <q-list class="container-2" separator>
           <q-expansion-item
             expand-separator
-            icon="perm_identity"
-            label="Account settings"
-            caption="John Doe"
+            icon="adjust"
+            label="Nodes"
+            caption="Click to add"
             default-opened
           >
             <q-card>
               <q-card-section>
-                <label>
-                  <q-select
-                    name="type"
-                    v-model="selectedType"
-                    :options="selectableBlocks"
-                  >
-                  </q-select>
-                </label>
-                <q-btn label="Add" @click.stop="addBlock"></q-btn>
-                <label for="useContextMenu">
-                  <input
-                    type="checkbox"
-                    v-model="useContextMenu"
-                    id="useContextMenu"
-                  />Use right click for Add blocks
-                </label>
+                <q-btn no-caps v-bind:key="node.name" v-for="node in selectableMMNodes" :label="node.label || node.value" @click.stop="addNode(node.value)"></q-btn>
               </q-card-section>
             </q-card>
           </q-expansion-item>
 
           <q-expansion-item
             expand-separator
-            icon="drafts"
+            icon="settings"
             label="Property"
             caption="Click on element to display its properties"
             default-opened
           >
             <q-card>
               <q-card-section>
-                <VueBlockProperty
-                  :property="selectedBlockProperty"
+                <VueNodeProperty
+                  :property="selectedNodeProperty"
                   @save="saveProperty"
                 />
               </q-card-section>
@@ -86,9 +71,8 @@
 
           <q-expansion-item
             expand-separator
-            icon="perm_identity"
-            label="Account settings"
-            caption="John Doe"
+            icon="text_fields"
+            label="Generated object"
           >
             <q-card>
               <q-card-section>
@@ -112,23 +96,23 @@
 <script>
 import merge from 'deepmerge'
 
-import VueBlocksContainer from 'components/VueBlocksContainer'
-import VueBlockProperty from 'components/VueBlockProperty'
+import VueNodesContainer from 'components/VueNodesContainer'
+import VueNodeProperty from 'components/VueNodeProperty'
 import domHelper from '../helpers/dom'
-import metaModel from './mm.json'
+import MMNodes from './mm.json'
 import diagram from './diagram.json'
 
 export default {
   name: 'App',
   components: {
-    VueBlocksContainer,
-    VueBlockProperty
+    VueNodesContainer,
+    VueNodeProperty
   },
   data: function () {
     return {
-      metaModel: metaModel,
+      MMNodes: MMNodes,
       diagram: diagram,
-      selectedBlock: null,
+      selectedNode: null,
       selectedType: 'delay',
       useContextMenu: true,
       contextMenu: {
@@ -141,18 +125,17 @@ export default {
     }
   },
   computed: {
-    selectedBlockProperty () {
-      if (!this.selectedBlock || !this.selectedBlock.values || !this.selectedBlock.values.property) {
+    selectedNodeProperty () {
+      if (!this.selectedNode || !this.selectedNode.values || !this.selectedNode.values.property) {
         return null
       }
-
-      return this.selectedBlock.values.property
+      return this.selectedNode.values.property
     },
-    selectableBlocks () {
-      return this.metaModel.map(function (item) { return { value: item.name, label: item.title ? item.title : item.name } })
+    selectableMMNodes () {
+      return this.MMNodes.map(function (item) { return { value: item.name, label: item.title ? item.title : item.name } })
     },
-    selectBlocksType () {
-      return this.metaModel.map(b => {
+    selectMMNodes () {
+      return this.MMNodes.map(b => {
         return b.family
       }).filter((value, index, array) => {
         return array.indexOf(value) === index
@@ -160,30 +143,30 @@ export default {
     }
   },
   methods: {
-    selectBlock (block) {
-      console.log('select', block)
-      this.selectedBlock = block
+    selectNode (node) {
+      console.log('select', node)
+      this.selectedNode = node
     },
-    deselectBlock (block) {
-      console.log('deselect', block)
-      this.selectedBlock = null
+    deselectNode (node) {
+      console.log('deselect', node)
+      this.selectedNode = null
     },
-    filteredBlocks (type) {
-      return this.metaModel.filter(value => {
+    filteredMMNodes (type) {
+      return this.MMNodes.filter(value => {
         return value.family === type
       })
     },
-    addBlock () {
-      this.$refs.container.addNewBlock(this.selectedType, 100, 100)
+    addNode (type) {
+      this.$refs.container.addNewNode(type, 100, 100)
     },
     saveProperty (val) {
       console.log(val)
 
       let diagram = this.diagram
-      let block = diagram.blocks.find(b => {
-        return b.id === this.selectedBlock.id
+      let node = diagram.nodes.find(b => {
+        return b.id === this.selectedNode.id
       })
-      block.values.property = val
+      node.values.property = val
 
       this.diagram = merge({}, diagram)
     },
@@ -216,13 +199,13 @@ export default {
       this.contextMenu.top = top
       this.contextMenu.left = left
     },
-    addBlockContextMenu (name) {
+    addNodeContextMenu (name) {
       let offset = domHelper.getOffsetRect(this.$refs.container.$el)
 
       let x = this.contextMenu.mouseX - offset.left
       let y = this.contextMenu.mouseY - offset.top
 
-      this.$refs.container.addNewBlock(name, x, y)
+      this.$refs.container.addNewNode(name, x, y)
       this.closeContextMenu()
     },
     closeContextMenu () {
@@ -230,8 +213,8 @@ export default {
     }
   },
   watch: {
-    blocks (newValue) {
-      // console.log('blocks', JSON.stringify(newValue))
+    nodes (newValue) {
+      // console.log('nodes', JSON.stringify(newValue))
     },
     diagram (newValue) {
       // console.log('diagram', JSON.stringify(newValue))
@@ -266,7 +249,7 @@ body {
 .container {
   width: 100%;
   height: ~'calc(100% - 50px)';
-  border: 1px solid black;
+  border: 1px solid rgb(226, 226, 226);
 }
 
 #contextMenu {

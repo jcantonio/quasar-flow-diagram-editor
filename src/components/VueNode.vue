@@ -1,8 +1,8 @@
 <template>
-  <div class="vue-block" :class="{ selected: selected }" :style="style">
+  <div class="vue-node" :class="{ selected: selected }" :style="style">
     <header :style="headerStyle">
       {{ title }}
-      <q-btn class="delete" round size="xs" icon="remove" @click="deleteBlock"/>
+      <q-btn class="delete" round size="xs" icon="remove" @click="deleteNode"/>
     </header>
     <div class="inputs">
       <div class="input" v-bind:key="index" v-for="(slot, index) in inputs">
@@ -30,7 +30,7 @@
 
 <script>
 export default {
-  name: 'VueBlock',
+  name: 'VueNode',
   props: {
     x: {
       type: Number,
@@ -151,7 +151,7 @@ export default {
     save () {
       this.$emit('update')
     },
-    deleteBlock () {
+    deleteNode () {
       this.$emit('delete')
     },
     moveWithDiff (diffX, diffY) {
@@ -182,7 +182,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@blockBorder: 1px;
+@nodeBorder: 1px;
 
 @ioPaddingInner: 2px 0;
 @ioHeight: 16px;
@@ -196,10 +196,10 @@ export default {
 @circleRemoveColor: #af3b3b;
 @circleConnectedColor: #e9e9e9;
 
-.vue-block {
+.vue-node {
   position: absolute;
   box-sizing: border-box;
-  border: @blockBorder solid rgb(218, 216, 216);
+  border: @nodeBorder solid rgb(218, 216, 216);
   background: white;
   z-index: 1;
   opacity: 0.9;
@@ -226,7 +226,7 @@ export default {
   .outputs {
     padding: @ioPaddingInner;
 
-    display: block;
+    display: node;
     width: 50%;
 
     > * {
@@ -254,7 +254,7 @@ export default {
     float: left;
     text-align: left;
 
-    margin-left: -(@circleSize / 2 + @blockBorder);
+    margin-left: -(@circleSize / 2 + @nodeBorder);
   }
 
   .input,
@@ -288,7 +288,7 @@ export default {
     float: right;
     text-align: right;
 
-    margin-right: -(@circleSize / 2 + @blockBorder);
+    margin-right: -(@circleSize / 2 + @nodeBorder);
   }
 
   .output {

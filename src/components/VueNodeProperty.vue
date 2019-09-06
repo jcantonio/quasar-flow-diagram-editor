@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: 'VueBlockProperty',
+  name: 'VueNodeProperty',
   props: ['property'],
   data () {
     return {
