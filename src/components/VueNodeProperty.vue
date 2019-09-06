@@ -1,7 +1,7 @@
 <template>
   <div v-if="selected" >
     <q-input label="Title" type="text" v-model="internalTitle" v-on:input="saveTitle" />
-    <div v-bind:key="p.name" class="property" v-for="p in properties">
+    <div v-bind:key="p.name" class="property" v-for="p in internalProperties">
       <q-input :label="p.label || p.name" type="text" v-model="p.value" v-on:input="save" />
     </div>
   </div>
@@ -10,11 +10,11 @@
 <script>
 export default {
   name: 'VueNodeProperty',
-  props: ['title', 'property', 'selected'],
+  props: ['title', 'properties', 'selected'],
   data () {
     return {
       internalTitle: null,
-      properties: null
+      internalProperties: null
     }
   },
   methods: {
@@ -22,17 +22,17 @@ export default {
       this.internalTitle = this.title
     },
     loadProperties () {
-      this.properties = this.property
+      this.internalProperties = this.properties
     },
     saveTitle () {
       this.$emit('save-title', this.internalTitle)
     },
     save () {
-      this.$emit('save', this.properties)
+      this.$emit('save', this.internalProperties)
     }
   },
   watch: {
-    property () {
+    properties () {
       this.loadProperties()
     },
     title () {

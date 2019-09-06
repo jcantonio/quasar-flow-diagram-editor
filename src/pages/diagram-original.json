@@ -7,7 +7,7 @@
       "type": "Chat message",
       "title": "Chat message",
       "values": {
-        "property": [
+        "properties": [
           {
             "name": "message",
             "type": "string"
@@ -22,7 +22,7 @@
       "type": "text",
       "title": "Text",
       "values": {
-        "property": {
+        "properties": {
           "text": {
             "label": "Text",
             "type": "string"
@@ -37,7 +37,7 @@
       "type": "text",
       "title": "Text",
       "values": {
-        "property": {
+        "properties": {
           "text": {
             "label": "Text",
             "type": "string"
@@ -52,7 +52,7 @@
       "type": "delay",
       "title": "Delay",
       "values": {
-        "property": {
+        "properties": {
           "delay": {
             "label": "Delay (s)",
             "type": "number",
@@ -68,7 +68,7 @@
       "type": "shortcuts",
       "title": "Shortcuts",
       "values": {
-        "property": {
+        "properties": {
           "keys": {
             "label": "Activation keys",
             "type": "keys"
@@ -83,7 +83,7 @@
       "type": "text",
       "title": "Text",
       "values": {
-        "property": {
+        "properties": {
           "text": {
             "label": "Text",
             "type": "string"
@@ -98,7 +98,7 @@
       "type": "delay",
       "title": "Delay",
       "values": {
-        "property": {
+        "properties": {
           "delay": {
             "label": "Delay (s)",
             "type": "number",
@@ -114,7 +114,7 @@
       "type": "text",
       "title": "Text",
       "values": {
-        "property": {
+        "properties": {
           "text": {
             "label": "Text",
             "type": "string"
@@ -129,7 +129,7 @@
       "type": "shortcuts",
       "title": "Shortcuts",
       "values": {
-        "property": {
+        "properties": {
           "keys": {
             "label": "Activation keys",
             "type": "keys"
@@ -144,7 +144,7 @@
       "type": "delay",
       "title": "Delay",
       "values": {
-        "property": {
+        "properties": {
           "delay": {
             "label": "Delay (s)",
             "type": "number",
@@ -160,7 +160,7 @@
       "name": "text",
       "title": "Text",
       "values": {
-        "property": {
+        "properties": {
           "text": {
             "label": "Text",
             "type": "string"
@@ -175,7 +175,7 @@
       "type": "text",
       "title": "Text",
       "values": {
-        "property": {
+        "properties": {
           "text": {
             "label": "Text",
             "type": "string"
@@ -190,7 +190,7 @@
       "type": "delay",
       "title": "Delay",
       "values": {
-        "property": {
+        "properties": {
           "delay": {
             "label": "Delay (s)",
             "type": "number",
@@ -206,7 +206,7 @@
       "type": "animation",
       "title": "Animation",
       "values": {
-        "property": {
+        "properties": {
           "animation": {
             "label": "Animation",
             "type": "animation"
@@ -221,7 +221,7 @@
       "name": "delay",
       "title": "Delay",
       "values": {
-        "property": {
+        "properties": {
           "delay": {
             "label": "Delay (s)",
             "type": "number",

@@ -35,7 +35,7 @@
       "title": "REST Call",
       "icon": "settings_input_component",
       "values": {
-        "property": {
+        "properties": {
           "method": {
             "label": "Method",
             "type": "animation"
@@ -51,7 +51,7 @@
       "title": "Send SMS",
       "icon": "sms",
       "values": {
-        "property": {
+        "properties": {
           "recipients": {
             "label": "Recipients",
             "type": "string"
@@ -71,7 +71,7 @@
       "title": "Send Email",
       "icon": "mail",
       "values": {
-        "property": {
+        "properties": {
           "recipients": {
             "label": "Recipients",
             "type": "string"

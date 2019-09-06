@@ -54,7 +54,7 @@
                   :selected="selectedNode!=null"
                   :title="selectedNodeTitle"
                   @save-title="saveTitle"
-                  :property="selectedNodeProperty"
+                  :properties="selectedNodeProperties"
                   @save="saveProperty"
                 />
               </q-card-section>
@@ -104,11 +104,11 @@ export default {
     }
   },
   computed: {
-    selectedNodeProperty () {
-      if (!this.selectedNode || !this.selectedNode.values || !this.selectedNode.values.property) {
+    selectedNodeProperties () {
+      if (!this.selectedNode || !this.selectedNode.values || !this.selectedNode.values.properties) {
         return null
       }
-      return this.selectedNode.values.property
+      return this.selectedNode.values.properties
     },
     selectedNodeTitle () {
       if (!this.selectedNode || !this.selectedNode.title) {
@@ -136,7 +136,7 @@ export default {
       let node = diagram.nodes.find(b => {
         return b.id === this.selectedNode.id
       })
-      node.values.property = val
+      node.values.properties = val
 
       this.diagram = merge({}, diagram)
     },
