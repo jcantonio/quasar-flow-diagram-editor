@@ -50,12 +50,7 @@
         "attr": "property"
       },
       {
-        "name": "Play",
-        "type": "event",
-        "attr": "input"
-      },
-      {
-        "name": "Stop",
+        "name": "call",
         "type": "event",
         "attr": "input"
       },

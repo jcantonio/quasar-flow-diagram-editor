@@ -4,7 +4,6 @@ quasar-flow-diagram-editor
 based on
 https://github.com/ghostiam/vue-blocks
 
-## TODO
 ### Use Quasar components
 ### Refactor model
 

@@ -2,8 +2,8 @@
   "nodes": [
     {
       "id": 16,
-      "x": -942,
-      "y": -40,
+      "x": -49,
+      "y": -76,
       "type": "end_ko",
       "title": "End",
       "icon": "mood_bad",
@@ -11,8 +11,8 @@
     },
     {
       "id": 17,
-      "x": -937,
-      "y": 39,
+      "x": -39,
+      "y": 35,
       "type": "end_ok",
       "title": "End",
       "icon": "mood",
@@ -26,12 +26,124 @@
       "title": "Start",
       "icon": "trip_origin",
       "values": {}
+    },
+    {
+      "id": 19,
+      "x": -641,
+      "y": -81,
+      "type": "rest",
+      "title": "REST Call",
+      "icon": "settings_input_component",
+      "values": {
+        "property": {
+          "method": {
+            "label": "Method",
+            "type": "animation"
+          }
+        }
+      }
+    },
+    {
+      "id": 20,
+      "x": -348,
+      "y": 60,
+      "type": "sms",
+      "title": "Send SMS",
+      "icon": "sms",
+      "values": {
+        "property": {
+          "recipients": {
+            "label": "Recipients",
+            "type": "string"
+          },
+          "message": {
+            "label": "Message",
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": 21,
+      "x": -344,
+      "y": -77,
+      "type": "email",
+      "title": "Send Email",
+      "icon": "mail",
+      "values": {
+        "property": {
+          "recipients": {
+            "label": "Recipients",
+            "type": "string"
+          },
+          "subject": {
+            "label": "Subject",
+            "type": "string"
+          },
+          "message": {
+            "label": "Message",
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": 22,
+      "x": -33,
+      "y": 146,
+      "type": "end_ko",
+      "title": "End not Ok",
+      "icon": "mood_bad",
+      "values": {}
     }
   ],
-  "links": [],
+  "links": [
+    {
+      "id": 1,
+      "originID": 18,
+      "originSlot": 0,
+      "targetID": 19,
+      "targetSlot": 0
+    },
+    {
+      "id": 2,
+      "originID": 19,
+      "originSlot": 0,
+      "targetID": 21,
+      "targetSlot": 0
+    },
+    {
+      "id": 3,
+      "originID": 19,
+      "originSlot": 1,
+      "targetID": 20,
+      "targetSlot": 0
+    },
+    {
+      "id": 4,
+      "originID": 21,
+      "originSlot": 0,
+      "targetID": 16,
+      "targetSlot": 0
+    },
+    {
+      "id": 5,
+      "originID": 20,
+      "originSlot": 0,
+      "targetID": 17,
+      "targetSlot": 0
+    },
+    {
+      "id": 6,
+      "originID": 20,
+      "originSlot": 1,
+      "targetID": 22,
+      "targetSlot": 0
+    }
+  ],
   "container": {
     "centerX": 1042,
-    "centerY": 140,
+    "centerY": 147,
     "scale": 1
   }
 }
