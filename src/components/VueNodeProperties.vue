@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: 'VueNodeProperty',
+  name: 'VueNodeProperties',
   props: ['title', 'properties', 'selected'],
   data () {
     return {

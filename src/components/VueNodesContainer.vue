@@ -1,6 +1,6 @@
 <template>
   <div class="vue-container">
-    <VueLink :lines="lines" />
+    <VueLink @select="linkSelect($event)" :lines="lines" />
     <VueNode
       v-for="node in nodes"
       :key="node.id"
@@ -10,7 +10,7 @@
       @linkingStart="linkingStart(node, $event)"
       @linkingStop="linkingStop(node, $event)"
       @linkingBreak="linkingBreak(node, $event)"
-      @select="nodeSelect(node)"
+      @select="elementSelect(node)"
       @delete="nodeDelete(node)"
     />
   </div>
@@ -98,7 +98,7 @@ export default {
       links: [],
       //
       tempLink: null,
-      selectedNode: null,
+      selectedElement: null,
       hasDragged: false
     }
   },
@@ -163,6 +163,7 @@ export default {
         let y2 = targetLinkPos.y
 
         lines.push({
+          id: link.id,
           x1: x1,
           y1: y1,
           x2: x2,
@@ -475,20 +476,29 @@ export default {
       })
     },
     // Events
-    nodeSelect (node) {
-      node.selected = true
-      this.selectedNode = node
-      this.deselectAll(node.id)
-      this.$emit('nodeSelect', node)
+    elementSelect (element) {
+      element.selected = true
+      this.selectedElement = element
+      this.deselectAll(element.id)
+      this.$emit('elementSelect', element)
+    },
+    linkSelect (linkId) {
+      for (let index = 0; index < this.links.length; index++) {
+        const element = this.links[index]
+        if (element.id === linkId) {
+          this.elementSelect(element)
+          break
+        }
+      }
     },
     nodeDeselect (node) {
       node.selected = false
 
       if (node &&
-        this.selectedNode &&
-        this.selectedNode.id === node.id
+        this.selectedElement &&
+        this.selectedElement.id === node.id
       ) {
-        this.selectedNode = null
+        this.selectedElement = null
       }
 
       this.$emit('nodeDeselect', node)
@@ -574,8 +584,8 @@ export default {
       nodes = this.prepareNodesLinking(nodes, diagram.links)
 
       // set last selected after update nodes from props
-      if (this.selectedNode) {
-        let node = nodes.find(b => this.selectedNode.id === b.id)
+      if (this.selectedElement) {
+        let node = nodes.find(b => this.selectedElement.id === b.id)
         if (node) {
           node.selected = true
         }

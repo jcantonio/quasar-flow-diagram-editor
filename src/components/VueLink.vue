@@ -1,8 +1,8 @@
 <template>
   <svg width="100%" height="100%">
-    <g v-bind:key="p.x" v-for="p in renderedPathes">
-      <path v-if="outline" :d="p.data" :style="p.outlineStyle"></path>
-      <path :d="p.data" :style="p.style"></path>
+    <g :id="p.id" :class="{ selected: selected }" class="link selected" v-bind:key="p.x" v-for="p in renderedPathes">
+      <path :id="p.id" v-if="outline" :d="p.data" :style="p.outlineStyle"></path>
+      <path :id="p.id" :d="p.data" :style="p.style"></path>
     </g>
     <g>
       <path v-bind:key="a.x"
@@ -27,7 +27,14 @@ export default {
     outline: {
       type: Boolean,
       default: false
-    }
+    },
+    selected: Boolean
+  },
+  mounted () {
+    document.documentElement.addEventListener('mousedown', this.handleDown, true)
+  },
+  beforeDestroy () {
+    document.documentElement.removeEventListener('mousedown', this.handleDown, true)
   },
   methods: {
     distance (x1, y1, x2, y2) {
@@ -48,6 +55,18 @@ export default {
       let x = c1 * p0.x + c2 * p1.x + c3 * p2.x + c4 * p3.x
       let y = c1 * p0.y + c2 * p1.y + c3 * p2.y + c4 * p3.y
       return { x: x, y: y }
+    },
+    handleDown (e) {
+      console.log(e)
+      const target = e.target || e.srcElement
+      if (this.$el.contains(target) && e.which === 1) {
+        const linkId = parseInt(target.id)
+        this.dragging = true
+
+        this.$emit('select', linkId)
+
+        if (e.preventDefault) e.preventDefault()
+      }
     }
   },
   computed: {
@@ -60,6 +79,7 @@ export default {
       this.lines.forEach(l => {
         let dist = this.distance(l.x1, l.y1, l.x2, l.y2) * 0.25
         pathes.push({
+          id: l.id,
           data: `M ${l.x1}, ${l.y1} C ${(l.x1 + dist)}, ${l.y1}, ${(l.x2 - dist)}, ${l.y2}, ${l.x2}, ${l.y2}`,
           style: l.style,
           outlineStyle: l.outlineStyle
@@ -98,5 +118,14 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+.link {
+ cursor: pointer;
+}
+
+.selected {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  z-index: 2;
+}
+
 </style>

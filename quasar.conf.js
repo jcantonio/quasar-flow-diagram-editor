@@ -34,11 +34,13 @@ module.exports = function (ctx) {
         'QCard',
         'QCardSection',
         'QExpansionItem',
+        'QDialog',
         'QLayout',
         'QHeader',
         'QDrawer',
         'QPageContainer',
         'QPage',
+        'QPageSticky',
         'QTooltip',
         'QToolbar',
         'QToolbarTitle',
@@ -60,7 +62,8 @@ module.exports = function (ctx) {
 
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Notify',
+        'Dialog'
       ]
     },
 
