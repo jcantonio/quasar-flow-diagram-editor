@@ -578,6 +578,9 @@ export default {
       }
     },
     importDiagram () {
+      if (this.diagram === null) {
+        return
+      }
       let diagram = merge(this.defaultDiagram, this.diagram)
 
       let nodes = this.prepareNodes(diagram.nodes)
