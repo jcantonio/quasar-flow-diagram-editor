@@ -23,7 +23,8 @@
     "less-loader": "^4.0.5",
     "eslint-loader": "^2.1.1",
     "eslint-plugin-vue": "^5.0.0",
-    "cryptiles": ">=4.1.2"
+    "cryptiles": ">=4.1.2",
+    "hoek": ">=4.2.1"
   },
   "engines": {
     "node": ">= 8.9.0",
