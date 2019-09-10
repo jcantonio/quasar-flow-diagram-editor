@@ -1,7 +1,7 @@
 <template>
-  <div class="vue-container">
-    <VueLink @select="linkSelect($event)" :lines="lines" />
-    <VueNode
+  <div class="container">
+    <links @select="linkSelect($event)" :lines="lines" />
+    <node
       v-for="node in nodes"
       :key="node.id"
       v-bind.sync="node"
@@ -18,16 +18,16 @@
 
 <script>
 import merge from 'deepmerge'
-import mouseHelper from '../helpers/mouse'
+import mouseHelper from '../../helpers/mouse'
 
-import VueNode from './VueNode'
-import VueLink from './VueLink'
+import Node from './node'
+import Links from './links'
 
 export default {
-  name: 'VueNodeContainer',
+  name: 'NodeContainer',
   components: {
-    VueNode,
-    VueLink
+    Node,
+    Links
   },
   props: {
     MMNodes: {
@@ -341,9 +341,11 @@ export default {
     },
     linkingStop (targetNode, slotNumber) {
       if (this.linkStartData && targetNode && slotNumber > -1) {
+        /*
+        // this prevents to have several links into one input slot
         this.links = this.links.filter(value => {
           return !(value.targetID === targetNode.id && value.targetSlot === slotNumber)
-        })
+        }) */
 
         let maxID = Math.max(0, ...this.links.map(function (o) {
           return o.id
@@ -640,7 +642,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.vue-container {
+.container {
   position: relative;
   overflow: hidden;
   box-sizing: border-box;

@@ -1,7 +1,7 @@
 <template>
     <div class="row full-width">
       <div class="col-10 q-card">
-        <vue-nodes-container
+        <nodes-container
           ref="container"
           :MMNodes="MMNodes"
           :diagram.sync="internalDiagram"
@@ -39,12 +39,10 @@
               </q-card-section>
             </q-card>
           </q-expansion-item>
-
           <q-expansion-item
             expand-separator
             icon="settings"
             label="Properties"
-            caption="Click on element to display its properties"
             default-opened
           >
             <q-card>
@@ -68,17 +66,15 @@
 <script>
 import merge from 'deepmerge'
 
-import VueNodesContainer from 'components/VueNodesContainer'
-import VueNodeProperties from 'components/VueNodeProperties'
-import VueLinkProperties from 'components/VueLinkProperties'
-
 export default {
-  name: 'vue-flow-designer',
-  components: {
-    VueNodesContainer,
-    VueNodeProperties,
-    VueLinkProperties
-  },
+  name: 'flow-designer',
+  components:
+   {
+     NodesContainer: () => import('components/flow-diagram/nodes-container')
+   },
+  /* Object.keys(myComponents).reduce((obj, name) => {
+     return Object.assign(obj, { [name]: () => import(myComponents[name]) })
+   }, {}), */
   data: function () {
     return {
       internalDiagram: null,
@@ -86,6 +82,10 @@ export default {
     }
   },
   props: {
+    componentsProperties: {
+      type: Object,
+      default: () => {}
+    },
     MMNodes: {
       type: Array,
       default () {
@@ -104,10 +104,10 @@ export default {
   },
   computed: {
     selectedElementProperties () {
-      if (!this.selectedElement || !this.selectedElement.values || !this.selectedElement.values.properties) {
+      if (!this.selectedElement || !this.selectedElement.values || !this.selectedElement.values.property) {
         return null
       }
-      return this.selectedElement.values.properties
+      return this.selectedElement.values.property
     },
     selectedElementTitle () {
       if (!this.selectedElement || !this.selectedElement.title) {
@@ -117,13 +117,26 @@ export default {
     },
     componentPropertiesType () {
       if (this.selectedElement) {
-        if (this.selectedElement.type) {
-          return 'vue-node-properties'
+        const elementType = this.selectedElement.type
+        if (elementType) {
+          let componentName = this.componentsProperties[elementType]
+          if (componentName) {
+            return () => import(`components/properties-panels/${componentName}`)
+          } else {
+            // default
+            return () => import('components/flow-diagram/node-properties')
+          }
         } else {
-          return 'vue-link-properties'
+          let componentName = this.componentsProperties['link']
+          if (componentName) {
+            return () => import(`components/properties-panels/${componentName}`)
+          } else {
+            // default
+            return () => import('components/flow-diagram/link-properties')
+          }
         }
       } else {
-        return 'vue-link-properties'
+        return () => import('components/flow-diagram/none-properties')
       }
     }
   },
@@ -138,7 +151,6 @@ export default {
     },
     addNode (type) {
       this.$refs.container.addNewNode(type, 100, 100)
-      this.emit()
     },
     saveProperties (val) {
       console.log(val)
@@ -146,7 +158,7 @@ export default {
       let node = diagram.nodes.find(b => {
         return b.id === this.selectedElement.id
       })
-      node.values.properties = val
+      node.values.property = val
       this.internalDiagram = merge({}, diagram)
     },
     saveTitle (val) {
@@ -163,7 +175,7 @@ export default {
     nodes (newValue) {
       // console.log('nodes', JSON.stringify(newValue))
     },
-    diagram (newValue) {
+    internalDiagram (newValue) {
       this.$emit('update:diagram', this.internalDiagram)
       // console.log('diagram', JSON.stringify(newValue))
     }

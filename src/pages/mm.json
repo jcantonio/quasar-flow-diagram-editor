@@ -39,6 +39,40 @@
     ]
   },
   {
+    "type": "branch_out",
+    "title": "Branch-Out",
+    "icon": "keyboard_arrow_left",
+    "fields": [
+      {
+        "name": "in",
+        "type": "event",
+        "attr": "input"
+      },
+      {
+        "name": "out",
+        "type": "event",
+        "attr": "output"
+      }
+    ]
+  },
+  {
+    "type": "branch_in",
+    "title": "Branch-In",
+    "icon": "keyboard_arrow_right",
+    "fields": [
+      {
+        "name": "in",
+        "type": "event",
+        "attr": "input"
+      },
+      {
+        "name": "out",
+        "type": "event",
+        "attr": "output"
+      }
+    ]
+  },
+  {
     "type": "rest",
     "icon": "settings_input_component",
     "title": "REST Call",
@@ -162,6 +196,28 @@
       },
       {
         "name": "output",
+        "type": "event",
+        "attr": "output"
+      }
+    ]
+  },
+  {
+    "type": "save",
+    "title": "Save",
+    "icon": "save",
+    "fields": [
+      {
+        "name": "call",
+        "type": "event",
+        "attr": "input"
+      },
+      {
+        "name": "onOK",
+        "type": "event",
+        "attr": "output"
+      },
+      {
+        "name": "onKO",
         "type": "event",
         "attr": "output"
       }

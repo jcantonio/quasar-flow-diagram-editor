@@ -1,6 +1,18 @@
 <template>
   <q-page class="flex justify-center full-width">
-    <vue-flow-designer :MMNodes="MMNodes" :diagram.sync="diagram" />
+    <flow-designer :MMNodes="MMNodes" :diagram.sync="diagram" :componentsProperties="{
+      start: 'node-propertiesX',
+              end_ok: 'node-propertiesX',
+              end_ko: 'node-propertiesX',
+              branch_out: 'node-propertiesX',
+              branch_in: 'node-propertiesX',
+              rest: 'node-propertiesX',
+              sms: 'node-propertiesX',
+              email: 'node-propertiesX',
+              delay: 'node-propertiesX',
+              save: 'node-propertiesX',
+              link: 'link-propertiesX'
+    }" />
     <q-page-sticky position="bottom-left" :offset="[18, 18]">
       <q-btn
         icon="info"
@@ -14,14 +26,14 @@
 
 <script>
 
-import VueFlowDesigner from 'components/VueFlowDesigner'
+import FlowDesigner from 'components/flow-diagram/flow-designer'
 import MMNodes from './mm.json'
 import diagram from './diagram.json'
 
 export default {
   name: 'App',
   components: {
-    VueFlowDesigner
+    FlowDesigner
   },
   data: function () {
     return {
@@ -34,7 +46,7 @@ export default {
       const self = this
       const json = JSON.stringify(self.diagram, undefined, 2)
       this.$q.dialog({
-        title: 'Alert<em>!</em>',
+        title: 'Diagram Object',
         message: '<pre>' + json + '</pre>',
         html: true
       }).onOk(() => {

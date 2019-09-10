@@ -1,18 +1,9 @@
 {
   "nodes": [
     {
-      "id": 16,
-      "x": -49,
-      "y": -76,
-      "type": "end_ko",
-      "title": "End",
-      "icon": "mood_bad",
-      "values": {}
-    },
-    {
       "id": 17,
-      "x": -39,
-      "y": 35,
+      "x": -395,
+      "y": -122,
       "type": "end_ok",
       "title": "End",
       "icon": "mood",
@@ -28,72 +19,21 @@
       "values": {}
     },
     {
-      "id": 19,
-      "x": -641,
-      "y": -81,
-      "type": "rest",
-      "title": "REST Call",
-      "icon": "settings_input_component",
-      "values": {
-        "properties": {
-          "method": {
-            "label": "Method",
-            "type": "animation"
-          }
-        }
-      }
-    },
-    {
-      "id": 20,
-      "x": -348,
-      "y": 60,
-      "type": "sms",
-      "title": "Send SMS",
-      "icon": "sms",
-      "values": {
-        "properties": {
-          "recipients": {
-            "label": "Recipients",
-            "type": "string"
-          },
-          "message": {
-            "label": "Message",
-            "type": "string"
-          }
-        }
-      }
-    },
-    {
-      "id": 21,
-      "x": -344,
-      "y": -77,
-      "type": "email",
-      "title": "Send Email",
-      "icon": "mail",
-      "values": {
-        "properties": {
-          "recipients": {
-            "label": "Recipients",
-            "type": "string"
-          },
-          "subject": {
-            "label": "Subject",
-            "type": "string"
-          },
-          "message": {
-            "label": "Message",
-            "type": "string"
-          }
-        }
-      }
-    },
-    {
       "id": 22,
-      "x": -33,
-      "y": 146,
+      "x": -392,
+      "y": -37,
       "type": "end_ko",
       "title": "End not Ok",
       "icon": "mood_bad",
+      "values": {}
+    },
+    {
+      "id": 23,
+      "x": -672,
+      "y": -115,
+      "type": "save",
+      "title": "Save",
+      "icon": "save",
       "values": {}
     }
   ],
@@ -102,40 +42,19 @@
       "id": 1,
       "originID": 18,
       "originSlot": 0,
-      "targetID": 19,
+      "targetID": 23,
       "targetSlot": 0
     },
     {
       "id": 2,
-      "originID": 19,
-      "originSlot": 0,
-      "targetID": 21,
-      "targetSlot": 0
-    },
-    {
-      "id": 3,
-      "originID": 19,
-      "originSlot": 1,
-      "targetID": 20,
-      "targetSlot": 0
-    },
-    {
-      "id": 4,
-      "originID": 21,
-      "originSlot": 0,
-      "targetID": 16,
-      "targetSlot": 0
-    },
-    {
-      "id": 5,
-      "originID": 20,
+      "originID": 23,
       "originSlot": 0,
       "targetID": 17,
       "targetSlot": 0
     },
     {
-      "id": 6,
-      "originID": 20,
+      "id": 3,
+      "originID": 23,
       "originSlot": 1,
       "targetID": 22,
       "targetSlot": 0

@@ -1,5 +1,5 @@
 <template>
-  <div class="vue-node" :class="{ selected: selected }" :style="style">
+  <div class="node" :class="{ selected: selected }" :style="style">
     <header :style="headerStyle">
       <q-icon class="icon" size="xs" :name="icon"/>
       {{ title }}
@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: 'VueNode',
+  name: 'Node',
   props: {
     x: {
       type: Number,
@@ -201,7 +201,7 @@ export default {
 @circleRemoveColor: #af3b3b;
 @circleConnectedColor: #e9e9e9;
 
-.vue-node {
+.node {
   position: absolute;
   box-sizing: border-box;
   border: @nodeBorder solid rgb(218, 216, 216);
